@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useCart } from "../Context/CartContext"; 
 
 const categories = ["All", "Pizzas", "Pastas", "Salads", "Desserts", "Drinks"];
 
@@ -30,6 +31,14 @@ const menuItems = [
     image:
       "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=300&q=80",
   },
+  {
+    name: "Vegetarian Delight",
+    category: "Pizzas",
+    ingredients: "Bell peppers, mushrooms, olives, spinach",
+    price: "$15.49",
+    image:
+      "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=300&q=80",
+  },
   // Pastas
   {
     name: "Spaghetti Bolognese",
@@ -46,6 +55,14 @@ const menuItems = [
     price: "$12.99",
     image:
       "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=300&q=80",
+  },
+  {
+    name: "Penne Arrabiata",
+    category: "Pastas",
+    ingredients: "Penne pasta, spicy tomato sauce, chili flakes",
+    price: "$12.99",
+    image:
+      "https://media.istockphoto.com/id/2168058934/photo/classic-italian-pasta-penne-alla-arrabiata-with-basil-and-freshly-grated-parmesan-cheese-on.webp?a=1&b=1&s=612x612&w=0&k=20&c=iamqzBNgskjAzK4iX9JxQWcA-DszUgjd6YL2GZ4WJnI=",
   },
   // Salads
   {
@@ -81,6 +98,14 @@ const menuItems = [
     image:
       "https://plus.unsplash.com/premium_photo-1695028378225-97fbe39df62a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8VGlyYW1pc3V8ZW58MHx8MHx8fDA%3D",
   },
+  {
+    name: "Strawberry Cheesecake",
+    category: "Desserts",
+    ingredients: "Creamy cheesecake with fresh strawberries",
+    price: "$8.49",
+    image:
+      "https://media.istockphoto.com/id/1307131098/photo/slice-of-cheesecake-with-strawberry-jelly-topping-on-spatula.webp?a=1&b=1&s=612x612&w=0&k=20&c=JX5uUXQIXDqm8sBkc9U_ESRkQSBYXLuJvRbh3ava_LE=",
+  },
   // Drinks
   {
     name: "Lemonade",
@@ -102,12 +127,15 @@ const menuItems = [
 
 const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState("All");
+  const { addToCart } = useCart(); 
 
   // Filter menu items by category
   const filteredItems =
     activeCategory === "All"
       ? menuItems
       : menuItems.filter((item) => item.category === activeCategory);
+
+  // Removed duplicate addToCart function; using context's addToCart instead.
 
   return (
     <div className="pt-24 pb-16 bg-stone-50 min-h-screen w-full">
@@ -182,10 +210,18 @@ const MenuPage = () => {
                     </div>
                     <p className="text-gray-600 mb-4">{item.ingredients}</p>
                   </div>
-                  <motion.button
+                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="bg-red-600 text-white py-2 px-4 rounded-md font-medium hover:bg-red-700 transition-colors self-end"
+                    onClick={() =>
+                      addToCart({
+                         id: Date.now(),
+                        name: item.name,
+                        price: parseFloat(item.price.replace("$", "")),
+                        image: item.image,
+                      })
+                    }
                   >
                     Add to Cart
                   </motion.button>

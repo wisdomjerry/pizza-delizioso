@@ -1,20 +1,20 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MenuIcon, XIcon } from 'lucide-react';
+import { useCart } from '../Context/CartContext';
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { cartItems } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -24,15 +24,20 @@ const Navbar = () => {
     setIsOpen(false);
   }, [location.pathname]);
 
-  const handleScrollTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const handleOrderNow = () => {
+    if (cartItems.length === 0) {
+      alert('Your cart is empty! Please add some items first.');
+      navigate('/menu');
+    } else {
+      navigate('/cart');
+    }
   };
 
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Menu', path: '/menu' },
     { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' }
+    { name: 'Contact', path: '/contact' },
   ];
 
   return (
@@ -45,7 +50,7 @@ const Navbar = () => {
       }`}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link to="/" onClick={handleScrollTop} className="flex items-center">
+        <Link to="/" className="flex items-center">
           <motion.div
             whileHover={{ rotate: 10 }}
             transition={{ type: 'spring', stiffness: 300 }}
@@ -63,7 +68,6 @@ const Navbar = () => {
             <Link
               key={link.name}
               to={link.path}
-              onClick={handleScrollTop}
               className="relative group"
             >
               <span
@@ -88,14 +92,16 @@ const Navbar = () => {
               />
             </Link>
           ))}
+
+          {/* Order Now Button with Animated Cart Badge */}
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleScrollTop}
-            className="bg-red-600 text-white px-6 py-2 rounded-full font-medium hover:bg-red-700 transition-colors duration-300"
-          >
-            Order Now
-          </motion.button>
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      onClick={() => navigate("/cart")} // 👈 Navigate without alert
+      className="bg-red-600 text-white px-6 py-2 rounded-full font-medium hover:bg-red-700 transition-colors duration-300"
+    >
+      Order Now
+    </motion.button>
         </div>
 
         {/* Mobile Navigation Toggle */}
@@ -118,7 +124,6 @@ const Navbar = () => {
             <Link
               key={link.name}
               to={link.path}
-              onClick={handleScrollTop}
               className={`text-lg font-medium ${
                 location.pathname === link.path
                   ? 'text-red-600'
@@ -128,12 +133,27 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
+
           <motion.button
             whileTap={{ scale: 0.95 }}
-            onClick={handleScrollTop}
-            className="bg-red-600 text-white px-6 py-2 rounded-full font-medium hover:bg-red-700 transition-colors duration-300 mt-2 w-full"
+            onClick={handleOrderNow}
+            className="relative bg-red-600 text-white px-6 py-2 rounded-full font-medium hover:bg-red-700 transition-colors duration-300 mt-2 w-full"
           >
             Order Now
+            <AnimatePresence>
+              {cartItems.length > 0 && (
+                <motion.span
+                  key={cartItems.length}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                  className="absolute -top-2 -right-2 bg-yellow-400 text-black rounded-full px-2 text-xs font-bold"
+                >
+                  {cartItems.length}
+                </motion.span>
+              )}
+            </AnimatePresence>
           </motion.button>
         </div>
       </motion.div>
