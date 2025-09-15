@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MenuIcon, XIcon } from 'lucide-react';
 import { useCart } from '../Context/CartContext';
 
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -25,12 +24,7 @@ const Navbar = () => {
   }, [location.pathname]);
 
   const handleOrderNow = () => {
-    if (cartItems.length === 0) {
-      alert('Your cart is empty! Please add some items first.');
-      navigate('/menu');
-    } else {
-      navigate('/cart');
-    }
+    navigate('/cart');
   };
 
   const navLinks = [
@@ -45,20 +39,19 @@ const Navbar = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-      className={`fixed w-full z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
         scrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
       }`}
     >
-      <div className="w-full px-4 flex justify-between items-center">
+      <div className="w-full flex justify-between items-center px-4 md:px-6">
+        {/* Logo */}
         <Link to="/" className="flex items-center">
           <motion.div
             whileHover={{ rotate: 10 }}
             transition={{ type: 'spring', stiffness: 300 }}
           >
             <span className="text-3xl font-extrabold text-red-600">Pizza</span>
-            <span className="text-3xl font-extrabold text-green-700">
-              Delizioso
-            </span>
+            <span className="text-3xl font-extrabold text-green-700">Delizioso</span>
           </motion.div>
         </Link>
 
@@ -68,40 +61,23 @@ const Navbar = () => {
             <Link
               key={link.name}
               to={link.path}
-              className="relative group"
+              className={`relative text-lg font-medium ${
+                location.pathname === link.path
+                  ? 'text-red-600'
+                  : 'text-gray-800 hover:text-red-600'
+              } transition-colors duration-300`}
             >
-              <span
-                className={`text-lg font-medium ${
-                  location.pathname === link.path
-                    ? 'text-red-600'
-                    : 'text-gray-800 hover:text-red-600'
-                } transition-colors duration-300`}
-              >
-                {link.name}
-              </span>
-              <motion.span
-                className="absolute bottom-0 left-0 w-full h-0.5 bg-red-600 origin-left"
-                initial={{
-                  scaleX: location.pathname === link.path ? 1 : 0,
-                }}
-                animate={{
-                  scaleX: location.pathname === link.path ? 1 : 0,
-                }}
-                whileHover={{ scaleX: 1 }}
-                transition={{ duration: 0.3 }}
-              />
+              {link.name}
             </Link>
           ))}
-
-          {/* Order Now Button with Animated Cart Badge */}
           <motion.button
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      onClick={() => navigate("/cart")} // 👈 Navigate without alert
-      className="bg-red-600 text-white px-6 py-2 rounded-full font-medium hover:bg-red-700 transition-colors duration-300"
-    >
-      Order Now
-    </motion.button>
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleOrderNow}
+            className="bg-red-600 text-white px-6 py-2 rounded-full font-medium hover:bg-red-700 transition-colors duration-300"
+          >
+            Order Now
+          </motion.button>
         </div>
 
         {/* Mobile Navigation Toggle */}
@@ -117,27 +93,24 @@ const Navbar = () => {
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
         transition={{ duration: 0.3 }}
-        className="md:hidden overflow-hidden bg-white"
+        className="md:hidden overflow-hidden bg-white w-full absolute top-full left-0"
       >
-        <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4 px-4 py-4">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               to={link.path}
               className={`text-lg font-medium ${
-                location.pathname === link.path
-                  ? 'text-red-600'
-                  : 'text-gray-800'
+                location.pathname === link.path ? 'text-red-600' : 'text-gray-800'
               } hover:text-red-600 transition-colors duration-300 py-2`}
             >
               {link.name}
             </Link>
           ))}
-
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={handleOrderNow}
-            className="relative bg-red-600 text-white px-6 py-2 rounded-full font-medium hover:bg-red-700 transition-colors duration-300 mt-2 w-full"
+            className="relative bg-red-600 text-white px-6 py-2 rounded-full font-medium hover:bg-red-700 transition-colors duration-300 w-full"
           >
             Order Now
             <AnimatePresence>
