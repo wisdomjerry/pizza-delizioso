@@ -49,7 +49,7 @@ const Navbar = () => {
         scrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
       }`}
     >
-      <div className="container mx-0 px-4 flex justify-between items-center">
+      <div className="container mx-auto px-4 flex justify-between items-center w-full">
         <Link to="/" className="flex items-center">
           <motion.div
             whileHover={{ rotate: 10 }}
