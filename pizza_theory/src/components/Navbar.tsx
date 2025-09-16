@@ -6,37 +6,32 @@ import { useCart } from "../Context/CartContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { cartItems } = useCart();
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    function handleClickOutside(event: { target: any }) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
 
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
   }, [isOpen]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     setIsOpen(false);
@@ -59,18 +54,22 @@ const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 120, damping: 20 }}
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-white shadow-md py-2" : "bg-transparent py-4"
+        scrolled
+          ? "bg-black/60 backdrop-blur-md shadow-md py-2"
+          : "bg-black/40 backdrop-blur-md py-4"
       }`}
     >
-      <div className="w-full flex justify-between items-center px-4 md:px-1">
+      <div className="w-full flex justify-between items-center px-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center">
+        <Link to="/" className="flex items-center flex-shrink-0">
           <motion.div
             whileHover={{ rotate: 10 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            <span className="text-3xl font-extrabold text-red-600">Pizza</span>
-            <span className="text-3xl font-extrabold text-green-700">
+            <span className="text-2xl sm:text-3xl font-extrabold text-red-600">
+              Pizza
+            </span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-green-700">
               Delizioso
             </span>
           </motion.div>
@@ -85,7 +84,7 @@ const Navbar = () => {
               className={`relative text-lg font-medium ${
                 location.pathname === link.path
                   ? "text-red-600"
-                  : "text-gray-800 hover:text-red-600"
+                  : "text-white hover:text-red-400"
               } transition-colors duration-300`}
             >
               {link.name}
@@ -102,8 +101,8 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Navigation Toggle */}
-        <div className="md:hidden">
-          <button onClick={() => setIsOpen(!isOpen)} className="text-gray-800">
+        <div className="md:hidden ml-auto">
+          <button onClick={() => setIsOpen(!isOpen)} className="text-white">
             {isOpen ? <XIcon size={28} /> : <MenuIcon size={28} />}
           </button>
         </div>
@@ -115,18 +114,18 @@ const Navbar = () => {
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
         transition={{ duration: 0.3 }}
-        className="md:hidden overflow-hidden bg-white w-full absolute top-full left-0"
+        className="md:hidden overflow-hidden bg-black/90 backdrop-blur-md w-full absolute top-full left-0"
       >
-        <div className="flex flex-col space-y-4 px-1 py-4">
+        <div className="flex flex-col space-y-4 px-4 py-4">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               to={link.path}
               className={`text-lg font-medium ${
                 location.pathname === link.path
-                  ? "text-red-600"
-                  : "text-gray-800"
-              } hover:text-red-600 transition-colors duration-300 py-2`}
+                  ? "text-red-500"
+                  : "text-white"
+              } hover:text-red-400 transition-colors duration-300 py-2`}
             >
               {link.name}
             </Link>
