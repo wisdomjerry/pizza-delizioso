@@ -71,7 +71,7 @@ const Navbar = () => {
       }`}
     >
       {/* Constrained Container */}
-      <div className="max-w-6xl mx-auto w-full flex justify-between items-center px-4 sm:px-6">
+      <div className="w-full max-w-6xl mx-auto flex justify-between items-center px-4 sm:px-6">
         {/* Logo */}
         <Link to="/" className="flex items-center flex-shrink-0">
           <motion.div
@@ -88,7 +88,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-8 flex-shrink">
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -113,8 +113,11 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Navigation Toggle */}
-        <div className="md:hidden flex justify-end pr-4 sm:pr-6">
-          <button onClick={() => setIsOpen(!isOpen)} className="text-white">
+        <div className="md:hidden flex-shrink-0">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-white ml-auto"
+          >
             {isOpen ? <XIcon size={28} /> : <MenuIcon size={28} />}
           </button>
         </div>
