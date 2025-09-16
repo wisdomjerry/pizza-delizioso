@@ -1,3 +1,5 @@
+// Navbar.tsx
+
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -60,19 +62,15 @@ const Navbar = () => {
   ];
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 120, damping: 20 }}
-      // The background should span the full width, so no max-width here
+    // This outer div will handle the full-width background and positioning
+    <div
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
         scrolled
           ? "bg-black/60 backdrop-blur-md shadow-md py-2"
           : "bg-black/40 backdrop-blur-md py-4"
       }`}
     >
-      {/* Constrained Container for Navbar content */}
-      {/* Apply max-w-6xl and mx-auto here to match homepage */}
+      {/* This inner div is the content container, matching your homepage's max-w-6xl */}
       <div className="max-w-6xl mx-auto flex justify-between items-center px-4 sm:px-6">
         {/* Logo */}
         <Link to="/" className="flex items-center flex-shrink-0">
@@ -123,15 +121,15 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu */}
-      {/* The mobile menu should also be constrained by the same max-width */}
       <motion.div
         ref={menuRef}
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
         transition={{ duration: 0.3 }}
-        className="md:hidden overflow-hidden bg-black/90 backdrop-blur-md absolute top-full left-0 w-full px-4 sm:px-6" // Ensure it has full width to be contained by parent below
+        className="md:hidden overflow-hidden bg-black/90 backdrop-blur-md absolute top-full left-0 w-full px-4 sm:px-6"
       >
-        <div className="container mx-auto max-w-6xl px-4 sm:px-6"> {/* Added container here */}
+        {/* The mobile menu content also needs to be within the same container */}
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex flex-col space-y-4 py-4">
             {navLinks.map((link) => (
               <Link
@@ -168,7 +166,7 @@ const Navbar = () => {
           </div>
         </div>
       </motion.div>
-    </motion.nav>
+    </div>
   );
 };
 
