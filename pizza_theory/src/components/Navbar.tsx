@@ -6,12 +6,13 @@ import { useCart } from "../Context/CartContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { cartItems } = useCart();
   const menuRef = useRef<HTMLDivElement | null>(null);
 
+  // Close mobile menu on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent | TouchEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -33,9 +34,19 @@ const Navbar = () => {
     };
   }, [isOpen]);
 
+  // Close menu on route change
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
+
+  // Handle scroll effect for navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleOrderNow = () => {
     navigate("/cart");
@@ -59,7 +70,8 @@ const Navbar = () => {
           : "bg-black/40 backdrop-blur-md py-4"
       }`}
     >
-      <div className="w-full flex justify-between items-center px-4">
+      {/* Constrained Container */}
+      <div className="max-w-6xl mx-auto w-full flex justify-between items-center px-4 sm:px-6">
         {/* Logo */}
         <Link to="/" className="flex items-center flex-shrink-0">
           <motion.div
@@ -101,7 +113,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Navigation Toggle */}
-        <div className="md:hidden ml-auto">
+        <div className="md:hidden flex justify-end pr-4 sm:pr-6">
           <button onClick={() => setIsOpen(!isOpen)} className="text-white">
             {isOpen ? <XIcon size={28} /> : <MenuIcon size={28} />}
           </button>
@@ -114,17 +126,15 @@ const Navbar = () => {
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
         transition={{ duration: 0.3 }}
-        className="md:hidden overflow-hidden bg-black/90 backdrop-blur-md w-full absolute top-full left-0"
+        className="md:hidden overflow-hidden bg-black/90 backdrop-blur-md w-full absolute top-full left-0 px-4 sm:px-6"
       >
-        <div className="flex flex-col space-y-4 px-4 py-4">
+        <div className="flex flex-col space-y-4 py-4">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               to={link.path}
               className={`text-lg font-medium ${
-                location.pathname === link.path
-                  ? "text-red-500"
-                  : "text-white"
+                location.pathname === link.path ? "text-red-500" : "text-white"
               } hover:text-red-400 transition-colors duration-300 py-2`}
             >
               {link.name}
